@@ -31,9 +31,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install XCUITest driver
-        run: npx appium driver install xcuitest
-
       - name: Find and boot iPhone 16
         shell: bash
         run: |
