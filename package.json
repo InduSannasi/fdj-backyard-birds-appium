@@ -8,7 +8,8 @@
     "test": "mocha --timeout 90000 --reporter mochawesome --reporter-options reportDir=artifacts/report,reportFilename=appium-tests,html=true,json=true,overwrite=false \"test/**/*.spec.js\"",
     "test:iphone16": "SIMULATOR_INDEX=0 mocha --timeout 90000 --reporter mochawesome --reporter-options reportDir=artifacts/report,reportFilename=appium-tests-iphone16,html=true,json=true,overwrite=false \"test/**/*.spec.js\"",
     "test:iphone17": "SIMULATOR_INDEX=1 mocha --timeout 90000 --reporter mochawesome --reporter-options reportDir=artifacts/report,reportFilename=appium-tests-iphone17,html=true,json=true,overwrite=false \"test/**/*.spec.js\"",
-    "test:parallel": "concurrently --names iphone16,iphone17 \"npm:test:iphone16\" \"npm:test:iphone17\""
+    "test:parallel": "concurrently --names iphone16,iphone17 \"npm:test:iphone16\" \"npm:test:iphone17\"",
+    "test:ci:iphone16": "SIMULATOR_INDEX=0 mocha --timeout 90000 --grep 'F12 —' --invert --reporter mochawesome --reporter-options reportDir=artifacts/report,reportFilename=appium-tests-ci-iphone16,html=true,json=true,overwrite=true \"test/**/*.spec.js\""
   },
   "devDependencies": {
     "appium": "^2.19.0",

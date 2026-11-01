@@ -1,0 +1,97 @@
+name: iOS Simulator Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  iphone16-tests:
+    runs-on: macos-15
+    timeout-minutes: 30
+    env:
+      SIMULATOR_INDEX: "0"
+      APPIUM_HOST: 127.0.0.1
+      APPIUM_PORT: "4723"
+      APPIUM_PATH: /wd/hub
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install XCUITest driver
+        run: npx appium driver install xcuitest
+
+      - name: Find and boot iPhone 16
+        shell: bash
+        run: |
+          simulator_json="$(xcrun simctl list devices available --json | node -e '
+            let input = "";
+            process.stdin.on("data", chunk => input += chunk);
+            process.stdin.on("end", () => {
+              const devices = Object.values(JSON.parse(input).devices).flat();
+              const device = devices.find(item => item.name === "iPhone 16");
+              if (!device) {
+                console.error("An available iPhone 16 simulator was not found.");
+                process.exit(1);
+              }
+              process.stdout.write(JSON.stringify(device));
+            });
+          ')"
+          simulator_udid="$(printf '%s' "$simulator_json" | node -p 'JSON.parse(require("fs").readFileSync(0, "utf8")).udid')"
+          simulator_state="$(printf '%s' "$simulator_json" | node -p 'JSON.parse(require("fs").readFileSync(0, "utf8")).state')"
+          echo "APPIUM_UDID_1=$simulator_udid" >> "$GITHUB_ENV"
+
+          if [ "$simulator_state" != "Booted" ]; then
+            xcrun simctl boot "$simulator_udid"
+          fi
+          xcrun simctl bootstatus "$simulator_udid" -b
+
+      - name: Run tests on iPhone 16
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          ./node_modules/.bin/appium \
+            --address "$APPIUM_HOST" \
+            --port "$APPIUM_PORT" \
+            --base-path "$APPIUM_PATH" \
+            > artifacts/appium.log 2>&1 &
+          appium_pid=$!
+          trap 'kill "$appium_pid" 2>/dev/null || true' EXIT
+
+          for attempt in {1..30}; do
+            if curl --fail --silent "$APPIUM_HOST:$APPIUM_PORT$APPIUM_PATH/status" >/dev/null; then
+              break
+            fi
+            if [ "$attempt" -eq 30 ]; then
+              cat artifacts/appium.log
+              echo "Appium did not become ready in time."
+              exit 1
+            fi
+            sleep 2
+          done
+
+          npm run test:ci:iphone16
+
+      - name: Upload reports and screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: iphone16-test-reports
+          path: |
+            artifacts/report/
+            artifacts/screenshots/
+            artifacts/appium.log
+          if-no-files-found: warn
