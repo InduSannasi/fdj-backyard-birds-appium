@@ -1,0 +1,21 @@
+{
+  "name": "backyard-birds-appium-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "JavaScript Appium automation for the Backyard Birds iOS sample app",
+  "scripts": {
+    "appium": "appium --address 127.0.0.1 --base-path /wd/hub",
+    "test": "mocha --timeout 90000 --reporter mochawesome --reporter-options reportDir=artifacts/report,reportFilename=appium-tests,html=true,json=true,overwrite=false \"test/**/*.spec.js\"",
+    "test:iphone16": "SIMULATOR_INDEX=0 mocha --timeout 90000 --reporter mochawesome --reporter-options reportDir=artifacts/report,reportFilename=appium-tests-iphone16,html=true,json=true,overwrite=false \"test/**/*.spec.js\"",
+    "test:iphone17": "SIMULATOR_INDEX=1 mocha --timeout 90000 --reporter mochawesome --reporter-options reportDir=artifacts/report,reportFilename=appium-tests-iphone17,html=true,json=true,overwrite=false \"test/**/*.spec.js\"",
+    "test:parallel": "concurrently --names iphone16,iphone17 \"npm:test:iphone16\" \"npm:test:iphone17\""
+  },
+  "devDependencies": {
+    "appium": "^2.19.0",
+    "appium-xcuitest-driver": "^9.10.5",
+    "concurrently": "^9.2.1",
+    "mocha": "^10.8.2",
+    "mochawesome": "^7.1.3",
+    "webdriverio": "^8.41.0"
+  }
+}
