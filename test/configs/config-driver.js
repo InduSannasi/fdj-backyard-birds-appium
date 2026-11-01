@@ -132,6 +132,9 @@ async function createDriver(simulator) {
     connectionRetryTimeout: Number(
       process.env.APPIUM_CONNECTION_RETRY_TIMEOUT || 120000,
     ),
+    connectionRetryCount: Number(
+      process.env.APPIUM_CONNECTION_RETRY_COUNT ?? 3,
+    ),
     capabilities,
   });
 }
