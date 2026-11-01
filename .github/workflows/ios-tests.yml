@@ -17,6 +17,8 @@ jobs:
       APPIUM_HOST: 127.0.0.1
       APPIUM_PORT: "4723"
       APPIUM_PATH: /wd/hub
+      APPIUM_CONNECTION_RETRY_TIMEOUT: "300000"
+      APPIUM_SESSION_TIMEOUT: "300000"
 
     steps:
       - name: Check out repository
@@ -80,7 +82,14 @@ jobs:
             sleep 2
           done
 
-          npm run test:ci:iphone16
+          if npm run test:ci:iphone16; then
+            exit 0
+          else
+            test_status=$?
+            echo "Appium server log (last 200 lines):"
+            tail -n 200 artifacts/appium.log
+            exit "$test_status"
+          fi
 
       - name: Upload reports and screenshots
         if: always()

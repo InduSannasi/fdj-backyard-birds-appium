@@ -8,6 +8,7 @@ function registerAppHooks({ simulator, setDriver, onSessionCreated }) {
   let driver;
 
   before(async function () {
+    this.timeout(Number(process.env.APPIUM_SESSION_TIMEOUT || 90000));
     driver = await createDriver(simulator);
     setDriver(driver);
     onSessionCreated(driver);

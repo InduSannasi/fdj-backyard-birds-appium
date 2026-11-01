@@ -129,6 +129,9 @@ async function createDriver(simulator) {
     port: Number(process.env.APPIUM_PORT || 4723),
     path: process.env.APPIUM_PATH || "/wd/hub",
     logLevel: "warn",
+    connectionRetryTimeout: Number(
+      process.env.APPIUM_CONNECTION_RETRY_TIMEOUT || 120000,
+    ),
     capabilities,
   });
 }
