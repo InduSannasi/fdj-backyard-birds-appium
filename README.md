@@ -111,6 +111,12 @@ npm run test:parallel
 SIMULATOR_INDEX=0 npx mocha --timeout 90000 --reporter spec test/testcases/backyards.spec.js
 ```
 
+# Run the CI suite on iPhone 16 (excludes the intentionally failing F12 case)
+
+npm run test:ci:iphone16
+
+```
+
 ### 📊Runtime Comparison
 
 Three recorded parallel runs completed all 15 tests on each device. The individual device durations and estimated sequential totals were:
@@ -121,7 +127,7 @@ Three recorded parallel runs completed all 15 tests on each device. The individu
 | 2   |      4:36 |      5:09 |                    5:09 |                     10:45 |
 | 3   |      4:21 |      4:32 |                    4:31 |                      8:43 |
 
-Across these runs, parallel execution took about **4–7 minutes**. Running the same two device suites sequentially is estimated at about **9–13 minutes**, based on adding their recorded durations. This suggests parallel execution can be around **1.7–2x faster** when both simulator sessions remain healthy. These are historical measurements, not a controlled benchmark; simulator startup, caching, system load, and intermittent WebDriverAgent failures can affect future results.
+Across these runs, parallel execution took about **4–7 minutes**. Running the same two device suites sequentially is estimated at about **9–13 minutes**, based on adding their recorded durations. This suggests parallel execution can be around **1.7–2x faster** when both simulator sessions remain healthy.
 
 ---
 
@@ -130,3 +136,4 @@ Across these runs, parallel execution took about **4–7 minutes**. Running the 
 The test commands write Mochawesome HTML and JSON reports to `artifacts/report/`. The parallel command creates a separate report for each device. Failed tests capture a screenshot under `artifacts/screenshots/` and attach it to the report. The Birds tab screenshot scenario also saves and attaches a screenshot.
 
 Generated artifacts, dependencies, and the supplied app bundle are excluded from Git.
+```

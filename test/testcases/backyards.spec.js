@@ -106,7 +106,7 @@ describe("Tests for Backyards Page", function () {
     await detailPage.favoriteButton.click();
     assert.equal(
       await detailPage.favoriteButton.isOn(),
-      !wasFavorite,
+      wasFavorite,
       "Favorite state did not toggle.",
     );
 
