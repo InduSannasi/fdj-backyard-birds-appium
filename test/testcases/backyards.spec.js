@@ -106,7 +106,7 @@ describe("Tests for Backyards Page", function () {
     await detailPage.favoriteButton.click();
     assert.equal(
       await detailPage.favoriteButton.isOn(),
-      wasFavorite,
+      !wasFavorite,
       "Favorite state did not toggle.",
     );
 
@@ -125,7 +125,7 @@ describe("Tests for Backyards Page", function () {
     await backyardsPage.openBackyard(BackyardsPage.names[0]);
     await backyardsPage.returnFromDetail();
     const reopenedDetail = await backyardsPage.openBackyard(
-      BackyardsPage.names[0],
+      BackyardsPage.names[1],
     );
 
     assert.equal(
